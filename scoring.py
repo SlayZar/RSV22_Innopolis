@@ -30,7 +30,7 @@ def scoring_script(scoring_df_path, train_df_path, output_filename):
         t_test[i] = np.min(sols[i], axis=0)
     t_test['crop'] = t_test[cb.classes_].idxmax(axis=1)
     t_test[['id', 'crop']].to_csv(os.path.join(solutions_path, 
-        output_filename+'_init'), index=False)
+        'init_' + output_filename), index=False)
 
     t_test = t_test.merge(df_train[['.geo', 'crop']], on = '.geo', how='left')
 
