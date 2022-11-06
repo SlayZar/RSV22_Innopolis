@@ -6,10 +6,11 @@ from catboost import CatBoostClassifier, Pool
 
 from prep_func import prep, get_res_from_df, read_data
 
-from config import train_datapath, test_datapath, not_fit_cols, my_params, drops, model_path
+from config import train_datapath, test_datapath, not_fit_cols, my_params, \
+ drops, model_path, solutions_path
 
 
-def scoring_script(scoring_df_path, train_df_path, output_path):
+def scoring_script(scoring_df_path, train_df_path, output_filename):
     df_train, df_test = read_data(train_df_path, scoring_df_path, not_fit_cols)
     full_train_poly = prep(df_train[['id', 'crop', '.geo']])
     full_test_poly = prep(df_test[['id', '.geo']])
@@ -28,9 +29,12 @@ def scoring_script(scoring_df_path, train_df_path, output_path):
     for i in cb.classes_:
         t_test[i] = np.min(sols[i], axis=0)
     t_test['crop'] = t_test[cb.classes_].idxmax(axis=1)
+    t_test[['id', 'crop']].to_csv(os.path.join(solutions_path, 
+        output_filename+'_init'), index=False)
+
     t_test = t_test.merge(df_train[['.geo', 'crop']], on = '.geo', how='left')
-    
+
     t_test['crop'] = 1
     t_test.loc[t_test.crop_y.isnull(), 'crop'] = t_test.loc[t_test.crop_y.isnull(), 'crop_x'].astype(int)
     t_test.loc[~t_test.crop_y.isnull(), 'crop'] = t_test.loc[~t_test.crop_y.isnull(), 'crop_y'].astype(int)
-    t_test[['id', 'crop']].to_csv(output_path, index=False)
+    t_test[['id', 'crop']].to_csv(os.path.join(solutions_path, output_filename), index=False)
