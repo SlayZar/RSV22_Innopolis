@@ -1,6 +1,7 @@
 train_datapath = 'data/train_dataset_train.csv'
 test_datapath = 'data/test_dataset_test.csv'
 model_path = 'models/'
+solutions_path = 'solutions'
 
 not_fit_cols = ['.geo', 'area', 'crop', 'id']
 
