@@ -29,12 +29,10 @@ def scoring_script(scoring_df_path, train_df_path, output_filename):
     for i in cb.classes_:
         t_test[i] = np.min(sols[i], axis=0)
     t_test['crop'] = t_test[cb.classes_].idxmax(axis=1)
-    t_test[['id', 'crop']].to_csv(os.path.join(solutions_path, 
-        'init_' + output_filename), index=False)
 
-    t_test = t_test.merge(df_train[['.geo', 'crop']], on = '.geo', how='left')
+    t_test = t_test.merge(df_train[['.geo', 'crop']].drop_duplicates(['.geo']), on = '.geo', how='left')
 
     t_test['crop'] = 1
     t_test.loc[t_test.crop_y.isnull(), 'crop'] = t_test.loc[t_test.crop_y.isnull(), 'crop_x'].astype(int)
     t_test.loc[~t_test.crop_y.isnull(), 'crop'] = t_test.loc[~t_test.crop_y.isnull(), 'crop_y'].astype(int)
-    t_test[['id', 'crop']].to_csv(os.path.join(solutions_path, output_filename), index=False)
+    t_test[['id', 'crop']].drop_duplicates().to_csv(os.path.join(solutions_path, output_filename), index=False)
