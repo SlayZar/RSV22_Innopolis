@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import geopy.distance as gd
 import geopandas
 import ast
 import warnings
@@ -7,6 +8,7 @@ from shapely.geometry import Polygon
 from operator import itemgetter
 
 from tqdm import tqdm_notebook
+msk_coord = (55.558741, 37.378847)
 
 warnings.filterwarnings("ignore")
 crs = "epsg:4326"
@@ -50,6 +52,8 @@ def prep(df_test_geo: pd.DataFrame):
     full_test_poly["lon"] = full_test_poly["geometry"].apply(
         lambda x: float(str(x).split("((")[1].split(" ")[1].split(",")[0])
     )
+    full_test_poly['kms'] = full_test_poly.apply(lambda x: gd.geodesic((x['lat'], x['lon']), msk_coord).km, axis=1)
+    full_test_poly['diff'] = full_test_poly['lat'] / full_test_poly['lon']
     return full_test_poly
 
 
@@ -83,4 +87,11 @@ def get_res_from_df(full_test_poly: pd.DataFrame,
         )
         res = pd.concat([res, tmp_df])
     res["crop_answ"] = res["crop_answ"].fillna(-1).astype(int)
+    return res
+
+
+def get_extra_features(res):
+    res['diff1'] = res['nd_mean_2021-06-02'] / res['nd_mean_2021-05-24']
+    res['diff2'] = res['nd_mean_2021-07-05'] / res['nd_mean_2021-05-24']
+    res['diff3'] = res['nd_mean_2021-08-10'] / res['nd_mean_2021-05-24']
     return res
