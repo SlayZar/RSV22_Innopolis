@@ -24,6 +24,7 @@ def scoring_function(test_datapath, solution_path):
     for i in cb.classes_:
         t_test[i] = np.max(sols[i], axis=0)
     t_test['crop'] = t_test[cb.classes_].idxmax(axis=1)
+    t_test.loc[(t_test['6']>0.5), 'crop'] = 6
     t_test[['id', 'crop']].to_csv(solution_path, index=False)
     print("Scoring result save in ", solution_path)
 
