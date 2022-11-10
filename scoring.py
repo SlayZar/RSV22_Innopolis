@@ -26,7 +26,7 @@ def scoring_function(test_datapath, solution_path):
     t_test['crop'] = t_test[cb.classes_].idxmax(axis=1)
     t_test.loc[(t_test[6]>0.5), 'crop'] = 6
     t_test['2_max'] = t_test[cb.classes_].apply(lambda x: sorted(x.to_list())[-2], axis=1)
-    t_test.loc[(t_test[4]>0.2) & (t_test['2_max'] != t_test[4]) & (~t_test['crop_x'] != 4), 'crop'] = 4
+    t_test.loc[(t_test[4]>0.2) & (t_test['2_max'] != t_test[4]) & (~t_test['crop'] != 4), 'crop'] = 4
     t_test[['id', 'crop']].to_csv(solution_path, index=False)
     print("Scoring result save in ", solution_path)
 
