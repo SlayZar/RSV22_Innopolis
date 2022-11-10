@@ -7,7 +7,7 @@ import warnings
 from shapely.geometry import Polygon
 from operator import itemgetter
 
-from tqdm import tqdm_notebook
+from tqdm import tqdm
 msk_coord = (55.558741, 37.378847)
 
 warnings.filterwarnings("ignore")
@@ -64,7 +64,7 @@ def get_res_from_df(full_test_poly: pd.DataFrame,
     and distance to element in different quantiles
     """
     res = pd.DataFrame()
-    for i in tqdm_notebook(range(len(full_test_poly["id"]))):
+    for i in tqdm(range(len(full_test_poly["id"]))):
         geom = full_test_poly["id"].iloc[i]
         polys = [full_train_poly[full_train_poly["id"] != geom]["geometry"]]
         point = full_test_poly["geometry"].iloc[i].centroid
