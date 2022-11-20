@@ -24,6 +24,10 @@ def scoring_function(test_datapath, solution_path):
     for i in cb.classes_:
         t_test[i] = np.max(sols[i], axis=0)
     t_test['crop'] = t_test[cb.classes_].idxmax(axis=1)
+#     Постпроцессинг:
+#     Если скор класса 6 больше 0.5 => predict = 6
+#     Если скор класса 4 больше 0.2, но он не втоп2 скоров для данной строки => predict = 4
+#     Постпроцессинг основан на валидационной выборке и лидерборде.
     t_test.loc[(t_test[6]>0.5), 'crop'] = 6
     t_test['2_max'] = t_test[cb.classes_].apply(lambda x: sorted(x.to_list())[-2], axis=1)
     t_test.loc[(t_test[4]>0.2) & (t_test['2_max'] != t_test[4]) & (~t_test['crop'] != 4), 'crop'] = 4
